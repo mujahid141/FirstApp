@@ -1,43 +1,62 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { refreshToken as refreshAuthToken } from '../services/authService'; // To refresh token if needed
 
-// Create an instance of axios
+ export const BASE_URL = 'http://192.168.0.102:8000/api/'; // Your Django backend URL
+
+// Create an axios instance
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/', // Replace with your API base URL
+  baseURL: BASE_URL,
   timeout: 10000, // Set a timeout (in milliseconds) for requests
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    // You can add other headers here
   },
 });
 
-// Interceptors can be used to add tokens or handle errors globally
+// Interceptor for adding Authorization token from AsyncStorage
 apiClient.interceptors.request.use(
-  (config) => {
-    // You can add a token if needed
-    const token = ''; // Replace with logic to get your token
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config) => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.error('Error retrieving token:', error);
     }
     return config;
   },
-  (error) => {
-    // Handle the request error here
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Interceptors for handling responses
+// Interceptor for handling responses and refreshing tokens if expired
 apiClient.interceptors.response.use(
-  (response) => {
-    // Handle the response data here
-    return response.data;
-  },
-  (error) => {
-    // Handle the response error here
+  (response) => response, // Return the response if no errors
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Handle unauthorized error (401) and try refreshing the token
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // Prevent infinite loop
+      try {
+        // Attempt to refresh the token
+        const newAccessToken = await refreshAuthToken();
+        if (newAccessToken) {
+          // Update the authorization header with the new token
+          apiClient.defaults.headers['Authorization'] = `Bearer ${newAccessToken}`;
+          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+          
+          // Retry the original request with the new token
+          return apiClient(originalRequest);
+        }
+      } catch (refreshError) {
+        console.error('Error refreshing token:', refreshError);
+        return Promise.reject(refreshError);
+      }
+    }
     return Promise.reject(error);
   }
 );
 
-// Export the configured axios instance
 export default apiClient;

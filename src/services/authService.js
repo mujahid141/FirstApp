@@ -1,50 +1,65 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BASE_URL } from '../config/apiConfig'; // Ensure BASE_URL is correctly defined
+import { BASE_URL } from '../config/apiConfig';
 
 // Set default axios config
 const apiClient = axios.create({
   baseURL: BASE_URL,
-  timeout: 5000, // optional: set timeout for requests
+  timeout: 5000, // Timeout set to 5 seconds
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 // Login service
-const login = async (username, password) => {
+export const login = async (username, password) => {
   try {
-    const response = await apiClient.post('http://192.168.0.102:8000/api/auth/login/', { username, password });
-    const { access, refresh } = response.data;
+    // Log the attempt to log in
+    console.log(BASE_URL)
+    console.log('Attempting login with:', { username, password });
 
-    // Store tokens in AsyncStorage
-    await AsyncStorage.setItem('accessToken', access);
-    await AsyncStorage.setItem('refreshToken', refresh);
+    const response = await apiClient.post('auth/login/', { username, password });
 
-    return response.data;
+    // Log the successful response
+    console.log('Login response:', response.data);
+
+    const { key } = response.data; // Assuming the access token is returned as 'key'
+
+    // Store the access token in AsyncStorage
+    await AsyncStorage.setItem('accessToken', key);
+
+    return response.data; // Return the response data for further handling
   } catch (error) {
-    console.error('Login error', error.response ? error.response.data : error.message);
-    throw new Error('Login failed. Please check your credentials.');
+    // Log error details
+    if (error.response) {
+      console.error('Login error status:', error.response.status);
+      console.error('Login error details:', error.response.data);
+    } else {
+      console.error('Login error message:', error.message);
+    }
+    throw new Error('Login failed. Please check your credentials and API settings.');
   }
 };
 
-// Refresh token service
-const refreshToken = async () => {
-  const refreshToken = await AsyncStorage.getItem('refreshToken');
-  if (!refreshToken) return null;
-
+// Logout service
+export const logout = async () => {
   try {
-    const response = await apiClient.post('/auth/token/refresh/', { refresh: refreshToken });
-    const { access } = response.data;
-
-    // Store the new access token
-    await AsyncStorage.setItem('accessToken', access);
-    
-    return access;
+    // Remove the access token from AsyncStorage
+    await AsyncStorage.removeItem('accessToken');
   } catch (error) {
-    console.error('Refresh token error', error.response ? error.response.data : error.message);
-    throw new Error('Failed to refresh token');
+    console.error('Logout error:', error.message);
+    throw new Error('Failed to log out');
   }
 };
 
-export { login, refreshToken };
+// Example of handling token expiry in API calls
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response && error.response.status === 401) {
+      console.error('Unauthorized! Token might be expired.'); 
+      // Handle the expired token scenario (e.g., redirect to login)
+    }
+    return Promise.reject(error);
+  }
+);
