@@ -3,16 +3,16 @@ import { View, Text, StyleSheet, Image ,TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // For icons
 
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       {/* Header with Icons */}
       <View style={styles.header}>
         <Text style={styles.farmName}>Farm's Name</Text>
         <View style={styles.iconContainer}>
-          <Icon name="user" size={24} color="gray" style={styles.icon} />
-          <Icon name="bell" size={24} color="green" style={styles.icon} />
-          <Icon name="cog" size={24} color="green" style={styles.icon} />
+          <Icon name="user" size={24} color="gray" style={styles.icon} onPress={()=>navigation.navigate('Profile')} />
+          <Icon name="bell" size={24} color="green" style={styles.icon}onPress={()=>navigation.navigate('Notifictions')} />
+          <Icon name="cog" size={24} color="green" style={styles.icon} onPress={()=>navigation.navigate('Settings')}/>
         </View>
       </View>
 
@@ -41,7 +41,7 @@ const HomeScreen = () => {
 
       {/* Buttons for Soil and Pest Analysis */}
       <View style={styles.analysisContainer}>
-      <TouchableOpacity style={styles.analysisButton} onPress={() =>navigation.navigate('Registration')}>
+      <TouchableOpacity style={styles.analysisButton} onPress={() =>navigation.navigate('Soilanalysis')}>
         <Text style={styles.analysisButtonText}>Soil Health Analysis</Text>
       </TouchableOpacity>
 
