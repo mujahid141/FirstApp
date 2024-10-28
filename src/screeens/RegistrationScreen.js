@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, Image, Alert } from 'react-native';
+import { View, Text, TextInput, Button, Image, Alert, TouchableOpacity, StyleSheet } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
 const RegisterScreen = () => {
-  const { login } = useContext(AuthContext); // If you plan to log in after registration
+  const { login } = useContext(AuthContext);
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -13,75 +13,66 @@ const RegisterScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleRegister = async () => {
-    // Simple client-side validation
     if (!username || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill out all fields.'); // Check all fields
+      Alert.alert('Error', 'Please fill out all fields.');
       return;
     }
-    
+
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match!');
       return;
     }
-  
+
     try {
       const response = await axios.post('http://192.168.0.102:8000/api/auth/register/', {
-        username: username,
-        email: email,
+        username,
+        email,
         password1: password,
         password2: confirmPassword,
       });
-  
+
       if (response.status === 204) {
-        // Registration successful, navigate to login or home screen
         Alert.alert('Success', 'Registration successful! You can now log in.');
         navigation.navigate('Login');
       } else {
-        // Registration failed, handle the error response
         Alert.alert('Error', response.data.message || 'Something went wrong!');
       }
     } catch (error) {
       if (error.response) {
-        // Check for specific field errors
         const { username, password1, password2 } = error.response.data;
         let errorMessage = '';
-        
-        if (username) {
-          errorMessage += `${username.join(' ')}\n`; // Join errors if multiple
-        }
-        if (password1) {
-          errorMessage += `${password1.join(' ')}\n`;
-        }
-        if (password2) {
-          errorMessage += `${password2.join(' ')}\n`;
-        }
-  
+
+        if (username) errorMessage += `${username.join(' ')}\n`;
+        if (password1) errorMessage += `${password1.join(' ')}\n`;
+        if (password2) errorMessage += `${password2.join(' ')}\n`;
+
         Alert.alert('Error', errorMessage || 'Registration failed.');
       } else {
-        // Something happened in setting up the request that triggered an error
         Alert.alert('Error', 'Failed to register. Please try again later.');
       }
     }
   };
-  
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10 }}>Register Yourself</Text>
 
-      <Image source={require('../../assets/Reg.png')} style={{ width: 100, height: 100, marginBottom: 20 }} />
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Register Yourself</Text>
+
+      <Image source={require('../../assets/Reg.png')} style={styles.logo} />
 
       <TextInput
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
-        style={{ width: '80%', height: 40, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, paddingHorizontal: 10, marginBottom: 10 }}
+        style={styles.input}
+        placeholderTextColor="#888"
       />
       
       <TextInput
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
-        style={{ width: '80%', height: 40, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, paddingHorizontal: 10, marginBottom: 10 }}
+        style={styles.input}
+        placeholderTextColor="#888"
       />
 
       <TextInput
@@ -89,7 +80,8 @@ const RegisterScreen = () => {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={{ width: '80%', height: 40, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, paddingHorizontal: 10, marginBottom: 10 }}
+        style={styles.input}
+        placeholderTextColor="#888"
       />
 
       <TextInput
@@ -97,18 +89,87 @@ const RegisterScreen = () => {
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry
-        style={{ width: '80%', height: 40, borderWidth: 1, borderColor: '#ccc', borderRadius: 5, paddingHorizontal: 10, marginBottom: 20 }}
+        style={styles.input}
+        placeholderTextColor="#888"
       />
 
-      <Button title="Register" onPress={handleRegister} style={{ backgroundColor: '#349B5F', padding: 10, borderRadius: 5 }} />
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Register</Text>
+      </TouchableOpacity>
 
-      <Text style={{ marginTop: 10 }}>Forgot your password? Click here!</Text>
 
-      <Text style={{ marginTop: 10, color: 'blue' }} onPress={() => navigation.navigate('Login')}>
-        Already have an account? Sign In
-      </Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.signInText}>Already have an account? Sign In</Text>
+      </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: 20,
+      alignItems: 'center',
+  },
+  title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: '#44923c',
+      textAlign: 'center',
+      marginBottom: 30,
+  },
+  logo: {
+      width: 100,
+      height: 100,
+      borderColor: '#349B5F', // Border color to match theme
+      marginBottom: 30,
+  },
+  label: {
+      fontSize: 16,
+      color: '#333',
+      marginBottom: 5,
+      alignSelf: 'flex-start',
+      marginLeft: '10%',
+  },
+  input: {
+      width: '80%',
+      height: 50,
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      borderColor: '#ddd',
+      borderWidth: 1,
+      paddingHorizontal: 15,
+      marginBottom: 20,
+      color: '#333',
+  },
+  button: {
+      width: '80%',
+      backgroundColor: '#72bf6a',
+      paddingVertical: 15,
+      borderRadius: 10,
+      alignItems: 'center',
+      marginBottom: 20,
+  },
+  buttonText: {
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: 'bold',
+  },
+  backToLogin: {
+      marginTop: 20,
+      color: '#6200ea',
+      fontSize: 16,
+  },
+
+  signInText: {
+    textAlign: 'center',
+    color: '#6200ea',
+    fontSize: 16,
+    marginBottom: 20
+    ,
+},
+
+});
 
 export default RegisterScreen;
