@@ -8,6 +8,7 @@ import ProfileScreen from "../screeens/ProfileScreen";
 import SettingsScreen from "../screeens/SettingScreen";
 import Notifictions from "../screeens/Notifications";
 import SoilAnalysis from "../screeens/SoilAnalysis";
+import ForgotPassword from "../screeens/ForgotPassword";
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,8 @@ const AppNavigator = () => {
             component={SoilAnalysis} 
             options={{ headerShown: true, title: 'Soilanalysis' }} 
           />
+
+         
         </>
       ) : (
         // If user is not authenticated, show LoginScreen and RegistrationScreen
@@ -58,6 +61,11 @@ const AppNavigator = () => {
             component={RegistrationScreen} 
             options={{ headerShown: false }} 
           />
+            <Stack.Screen 
+            name="ForgotPassword" 
+            component={ForgotPassword} 
+            options={{ headerShown: false,  }} 
+          /> 
         </>
       )}
     </Stack.Navigator>
