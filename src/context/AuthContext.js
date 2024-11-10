@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
             throw new Error('Login failed. Please check your credentials.');
         }
     };
+    
 
     const logout = async () => {
         await AsyncStorage.removeItem('accessToken'); // Remove access token from AsyncStorage
@@ -39,6 +40,8 @@ export const AuthProvider = ({ children }) => {
     if (loading) {
         return null; // Render nothing or a loader until token is checked
     }
+
+
 
     return (
         <AuthContext.Provider value={{ userToken, login, logout }}>

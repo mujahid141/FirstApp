@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { refreshToken as refreshAuthToken } from '../services/authService'; // To refresh token if needed
 
- export const BASE_URL = 'http://192.168.0.102:8000/api/'; // Your Django backend URL
+ export const BASE_URL = 'http://192.168.43.197:8000/api/'; // Your Django backend URL
 
 // Create an axios instance
 const apiClient = axios.create({
