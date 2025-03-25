@@ -1,18 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image ,TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // For icons
 
-
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Header with Icons */}
       <View style={styles.header}>
         <Text style={styles.farmName}>Farm's Name</Text>
         <View style={styles.iconContainer}>
-          <Icon name="user" size={24} color="gray" style={styles.icon} onPress={()=>navigation.navigate('Profile')} />
-          <Icon name="bell" size={24} color="green" style={styles.icon}onPress={()=>navigation.navigate('Notifictions')} />
-          <Icon name="cog" size={24} color="green" style={styles.icon} onPress={()=>navigation.navigate('Settings')}/>
+          <Icon name="user" size={24} color="gray" style={styles.icon} onPress={() => navigation.navigate('Profile')} />
+          <Icon name="bell" size={24} color="green" style={styles.icon} onPress={() => navigation.navigate('Notifications')} />
+          <Icon name="cog" size={24} color="green" style={styles.icon} onPress={() => navigation.navigate('Settings')} />
         </View>
       </View>
 
@@ -21,7 +20,7 @@ const HomeScreen = ({navigation}) => {
         <Text style={styles.weatherHeader}>Current Weather</Text>
         <Text style={styles.weatherSubHeader}>Your farm is Stress Free</Text>
         <Text style={styles.weatherLocation}>Near Akola</Text>
-        
+
         <View style={styles.temperatureContainer}>
           <Image
             source={require('../../assets/sun.jpg')} // Replace with your icon URL
@@ -41,22 +40,29 @@ const HomeScreen = ({navigation}) => {
 
       {/* Buttons for Soil and Pest Analysis */}
       <View style={styles.analysisContainer}>
-      <TouchableOpacity style={styles.analysisButton} onPress={() =>navigation.navigate('Soilanalysis')}>
-        <Text style={styles.analysisButtonText}>Soil Health Analysis</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.analysisButton} onPress={() => navigation.navigate('SoilAnalysis')}>
+          <Text style={styles.analysisButtonText}>Soil Health Analysis</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.analysisButton} onPress={() => alert('Pest Analysis and Insights')}>
-        <Text style={styles.analysisButtonText}>Pest Analysis and Insights</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.analysisButton} onPress={() => navigation.navigate('PestAnalysis')}>
+          <Text style={styles.analysisButtonText}>Pest Analysis and Insights</Text>
+        </TouchableOpacity>
 
-      {/* Placeholder buttons for additional features */}
-      <TouchableOpacity style={styles.analysisButton} onPress={() => alert('Additional Feature 1')}>
-        <Text style={styles.analysisButtonText}>Additional Feature 1</Text>
-      </TouchableOpacity>
+        {/* Report Generation Button */}
+        <TouchableOpacity 
+                  style={styles.analysisButton} onPress={() => navigation.navigate('ReportGeneration')}>
+                  <Text style={styles.analysisButtonText}>Generate Report</Text>
+         </TouchableOpacity>
 
-      <TouchableOpacity style={styles.analysisButton} onPress={() => alert('Additional Feature 2')}>
-        <Text style={styles.analysisButtonText}>Additional Feature 2</Text>
-      </TouchableOpacity>
+
+        {/* Placeholder buttons for additional features */}
+        <TouchableOpacity style={styles.analysisButton} onPress={() => alert('Additional Feature 1')}>
+          <Text style={styles.analysisButtonText}>Additional Feature 1</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.analysisButton} onPress={() => alert('Additional Feature 2')}>
+          <Text style={styles.analysisButtonText}>Additional Feature 2</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -68,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f0f8f5',
     padding: 16,
-    marginTop:35,
+    marginTop: 35,
   },
   header: {
     flexDirection: 'row',
@@ -147,7 +153,7 @@ const styles = StyleSheet.create({
   analysisButton: {
     width: '45%',
     height: 100,
-    backgroundColor: '#a2dec8',
+    backgroundColor: '#4CAF50',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',

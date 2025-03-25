@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, Button, Image, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Image, ActivityIndicator, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const SoilAnalysis = ({navigation}) => {
+const SoilAnalysis = ({ navigation }) => {
   const [imageUri, setImageUri] = useState(null);
   const [loading, setLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
 
-  // Function to pick image from gallery
   const handleChoosePhoto = () => {
     launchImageLibrary({ mediaType: 'photo', includeBase64: true }, response => {
       if (!response.didCancel && !response.error && response.assets) {
@@ -19,7 +19,6 @@ const SoilAnalysis = ({navigation}) => {
     });
   };
 
-  // Function to capture image from camera
   const handleTakePhoto = () => {
     launchCamera({ mediaType: 'photo', includeBase64: true }, response => {
       if (!response.didCancel && !response.error && response.assets) {
@@ -30,7 +29,6 @@ const SoilAnalysis = ({navigation}) => {
     });
   };
 
-  // Function to send the image for analysis
   const processImage = async (base64Image) => {
     setLoading(true);
     try {
@@ -44,18 +42,21 @@ const SoilAnalysis = ({navigation}) => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Soil Health Analysis</Text>
+    <View style={styles.container}>
+      <Text style={styles.header}>Soil Analysis</Text>
+      <Text style={styles.subHeader}>Analyze Your Soil</Text>
+      <Text style={styles.description}>Take or upload a clear photo of your soil sample</Text>
       
-      {/* Display the selected image */}
-      {imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200, marginVertical: 10 }} />}
+      <View style={styles.imageContainer}>
+        <Icon name="camera" size={40} color="#4CAF50" />
+        <Text style={styles.imageText}>{imageUri ? 'Image Selected' : 'No image selected'}</Text>
+      </View>
       
-      {/* Display loading indicator */}
+      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
       {loading && <ActivityIndicator size="large" color="#4CAF50" />}
 
-      {/* Display analysis result */}
       {analysisResult && (
-        <View>
+        <View style={styles.resultContainer}>
           <Text>Phosphorus (P): {analysisResult.P}</Text>
           <Text>pH Level: {analysisResult.pH}</Text>
           <Text>Organic Matter (OM): {analysisResult.OM}</Text>
@@ -63,11 +64,105 @@ const SoilAnalysis = ({navigation}) => {
         </View>
       )}
 
-      {/* Buttons to capture or pick an image */}
-      <Button title="Take Photo" onPress={handleTakePhoto} />
-      <Button title="Choose from Gallery" onPress={handleChoosePhoto} />
+      <TouchableOpacity style={styles.buttonPrimary} onPress={handleTakePhoto}>
+        <Icon name="camera" size={20} color="#FFF" />
+        <Text style={styles.buttonText}>Take Photo</Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity style={styles.buttonSecondary} onPress={handleChoosePhoto}>
+        <Icon name="image" size={20} color="#000" />
+        <Text style={styles.buttonTextSecondary}>Upload Photo</Text>
+      </TouchableOpacity>
+      
+      <View style={styles.tipsContainer}>
+        <Text style={styles.tipsHeader}>Tips for best results:</Text>
+        <Text>• Ensure good lighting conditions</Text>
+        <Text>• Keep the soil sample centered</Text>
+        <Text>• Avoid shadows in the image</Text>
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#fff'
+  },
+  header: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginTop: 10
+  },
+  subHeader: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 10
+  },
+  description: {
+    fontSize: 14,
+    color: 'gray',
+    textAlign: 'center',
+    marginBottom: 20
+  },
+  imageContainer: {
+    width: '100%',
+    height: 200,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    marginBottom: 10
+  },
+  imageText: {
+    color: 'gray'
+  },
+  image: {
+    width: 200,
+    height: 200,
+    marginVertical: 10
+  },
+  buttonPrimary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4CAF50',
+    padding: 12,
+    borderRadius: 8,
+    marginVertical: 5
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    marginLeft: 8
+  },
+  buttonSecondary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E0E0E0',
+    padding: 12,
+    borderRadius: 8,
+    marginVertical: 5
+  },
+  buttonTextSecondary: {
+    color: '#000',
+    fontSize: 16,
+    marginLeft: 8
+  },
+  tipsContainer: {
+    backgroundColor: '#E8F5E9',
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 20,
+    width: '100%'
+  },
+  tipsHeader: {
+    fontWeight: 'bold',
+    marginBottom: 5
+  }
+});
 
 export default SoilAnalysis;
