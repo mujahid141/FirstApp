@@ -9,6 +9,8 @@ import SettingsScreen from "../screeens/SettingScreen";
 import Notifictions from "../screeens/Notifications";
 import SoilAnalysis from "../screeens/SoilAnalysis";
 import ForgotPassword from "../screeens/ForgotPassword";
+import PestAnalysis from "../screeens/PestAnalysis";
+import ReportGeneration from "../screeens/ReportGeneration";
 
 const Stack = createStackNavigator();
 
@@ -17,7 +19,7 @@ const AppNavigator = () => {
 
   return (
     <Stack.Navigator>
-      {userToken ? (
+      {!userToken ? (
         // If user is authenticated, show HomeScreen, ProfileScreen, and SettingsScreen
         <>
           <Stack.Screen 
@@ -44,6 +46,18 @@ const AppNavigator = () => {
             name="Soilanalysis" 
             component={SoilAnalysis} 
             options={{ headerShown: true, title: 'Soilanalysis' }} 
+          />
+
+          <Stack.Screen 
+            name="PestAnalysis" 
+            component={PestAnalysis} 
+            options={{ headerShown: true, title: 'PestAnalysis' }} 
+          />
+          
+          <Stack.Screen 
+            name="ReportGeneration" 
+            component={ReportGeneration} 
+            options={{ headerShown: true, title: 'ReportGeneration' }}
           />
 
          

@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
       color: '#fff',
       fontSize: 18,
       fontWeight: 'bold',
-  },
+  },   
   backToLogin: {
       marginTop: 20,
       color: '#6200ea',
@@ -171,5 +171,5 @@ const styles = StyleSheet.create({
 },
 
 });
-
+   
 export default RegisterScreen;
